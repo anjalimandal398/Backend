@@ -2,19 +2,60 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
-const { Error } = require("mongoose");
+const {validateSignUpdate}=require("./utils/validation")
+const bcrypt=require("bcrypt")
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  //creating a new instance of the userModel
-  const user = new User(req.body);
+
   try {
+//validator
+validateSignUpdate(req)
+
+const{firstName,lastName,emailId,password}=req.body;
+
+//Encryption
+const passwordHash=await bcrypt.hash(password,10);
+console.log(passwordHash);
+
+
+
+  //creating a new instance of the userModel
+  const user = new User({
+    firstName,
+    lastName,
+    emailId,
+    password:passwordHash
+
+  });
     await user.save();
     res.send("User added successfully");
   } catch (err) {
-    res.status(400).send("error saving the user:", err.message);
+    res.status(400).send("ERROR: " + err.message);
   }
+});
+
+app.post("/login",async(req,res)=>{
+  try{
+    const {emailId,password}=req.body;
+    const user=await User.findOne({emailId:emailId})
+    if(!user){
+      throw new Error("Invalid email or password")
+    }
+    const isPasswordValid=await bcrypt.compare(password,user.password);
+   if(isPasswordValid){
+    res.send("Login Successful!!")
+   }
+   else{
+    throw new Error("Invalid email or password")
+   }
+
+  }
+  catch (err) {
+    res.status(400).send("ERROR: "+ err.message);   
+   }
+
 });
 
 
