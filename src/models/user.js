@@ -19,7 +19,7 @@ const userSchema=new mongoose.Schema({
     emailId:{
         type:String,
         required:true,
-        unique:true,
+        unique:true,                    //its also means that index:true  ,unique true krne se index v true hota hai mongoose ke documentation me sb hai jake padho bhai
         lowercase:true,
         trim: true,
         validate(value){
@@ -43,12 +43,18 @@ const userSchema=new mongoose.Schema({
     },
     gender:{
         type:String,
-        validate(value)
-        {
-            if(!["male","female","other"].includes (value)){
-                throw new Error("Gender data is not valid")
-            }
-        }
+        enum:{
+            values:["male","female","other"],
+            message:`{value} is not a valid gender type`
+        },
+
+        //or,
+        // validate(value)
+        // {
+        //     if(!["male","female","other"].includes (value)){
+        //         throw new Error("Gender data is not valid")
+        //     }
+        // }
     },
     about:{
         type:String, 
@@ -68,8 +74,9 @@ const userSchema=new mongoose.Schema({
     }
 },{
    timestamps:true, 
-}
-)
+});
+
+
 userSchema.methods.getJWT= async function(){
     const user = this;
 
