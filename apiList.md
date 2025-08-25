@@ -17,8 +17,8 @@
 
 
 ##userRouter
+GET /user/requests/received
 GET /user/connections
-GET /user/request
 GET /feed/review/rejected/:requested
 
 -status-interested , ignored, accept , reject
