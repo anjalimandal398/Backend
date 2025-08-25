@@ -12,12 +12,8 @@
 
 
 ##connectionRequestRouter
--POST /request/send/status/:userId
-
-
-
--POST /request/review/accept/:requestId
--POST /request/review/reject/:requestId
+-POST /request/send/status/:userId                     //interested or rejected
+-POST /request/send/status/:requestId                  //accept or reject
 
 
 ##userRouter
